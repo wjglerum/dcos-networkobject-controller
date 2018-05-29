@@ -74,19 +74,21 @@ func main() {
 	crdclient := client.CrdClient(crdcs, scheme, "default")
 
 	// Create a new Example object and write to k8s
-	example := &crd.Example{
+	example := &crd.NetworkObject{
 		ObjectMeta: meta_v1.ObjectMeta{
 			Name:   "example123",
 			Labels: map[string]string{"mylabel": "test"},
 		},
-		Spec: crd.ExampleSpec{
-			Foo: "example-text",
-			Bar: true,
+		VirtualNetork: crd.VirtualNetwork{
+			Name:      "test-network",
+			Namespace: "default",
+			Driver:    []string{},
+			Subnet:    []string{"192.168.1.0/24"},
+			Service:   []string{},
+			Policy:    []crd.SecurityPolicy{},
 		},
-		Status: crd.ExampleStatus{
-			State:   "created",
-			Message: "Created, not processed yet",
-		},
+		NetworkDriver:  []crd.NetworkDriver{},
+		NetworkService: []crd.NetworkService{},
 	}
 
 	result, err := crdclient.Create(example)
@@ -109,7 +111,7 @@ func main() {
 	// Watch for changes in Example objects and fire Add, Delete, Update callbacks
 	_, controller := cache.NewInformer(
 		crdclient.NewListWatch(),
-		&crd.Example{},
+		&crd.NetworkObject{},
 		time.Minute*10,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
@@ -139,6 +141,6 @@ func delete(obj interface{}) {
 	fmt.Printf("delete: %s \n", obj)
 }
 
-func update(oldObj, newObj interface{})  {
+func update(oldObj, newObj interface{}) {
 	fmt.Printf("Update old: %s \n      New: %s\n", oldObj, newObj)
 }

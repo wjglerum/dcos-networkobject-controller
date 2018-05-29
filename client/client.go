@@ -39,16 +39,16 @@ type crdclient struct {
 	codec  runtime.ParameterCodec
 }
 
-func (f *crdclient) Create(obj *crd.Example) (*crd.Example, error) {
-	var result crd.Example
+func (f *crdclient) Create(obj *crd.NetworkObject) (*crd.NetworkObject, error) {
+	var result crd.NetworkObject
 	err := f.cl.Post().
 		Namespace(f.ns).Resource(f.plural).
 		Body(obj).Do().Into(&result)
 	return &result, err
 }
 
-func (f *crdclient) Update(obj *crd.Example) (*crd.Example, error) {
-	var result crd.Example
+func (f *crdclient) Update(obj *crd.NetworkObject) (*crd.NetworkObject, error) {
+	var result crd.NetworkObject
 	err := f.cl.Put().
 		Namespace(f.ns).Resource(f.plural).
 		Body(obj).Do().Into(&result)
@@ -62,16 +62,16 @@ func (f *crdclient) Delete(name string, options *meta_v1.DeleteOptions) error {
 		Error()
 }
 
-func (f *crdclient) Get(name string) (*crd.Example, error) {
-	var result crd.Example
+func (f *crdclient) Get(name string) (*crd.NetworkObject, error) {
+	var result crd.NetworkObject
 	err := f.cl.Get().
 		Namespace(f.ns).Resource(f.plural).
 		Name(name).Do().Into(&result)
 	return &result, err
 }
 
-func (f *crdclient) List(opts meta_v1.ListOptions) (*crd.ExampleList, error) {
-	var result crd.ExampleList
+func (f *crdclient) List(opts meta_v1.ListOptions) (*crd.NetworkObjectList, error) {
+	var result crd.NetworkObjectList
 	err := f.cl.Get().
 		Namespace(f.ns).Resource(f.plural).
 		VersionedParams(&opts, f.codec).

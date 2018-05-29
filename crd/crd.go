@@ -29,10 +29,10 @@ import (
 )
 
 const (
-	CRDPlural      string = "examples"
-	CRDGroup       string = "myorg.io"
-	CRDVersion     string = "v1"
-	FullCRDName    string = CRDPlural + "." + CRDGroup
+	CRDPlural   string = "networkobjects"
+	CRDGroup    string = "dcos.wjglerum.nl"
+	CRDVersion  string = "v1"
+	FullCRDName string = CRDPlural + "." + CRDGroup
 )
 
 // Create the CRD resource, ignore error if it already exists
@@ -43,9 +43,9 @@ func CreateCRD(clientset apiextcs.Interface) error {
 			Group:   CRDGroup,
 			Version: CRDVersion,
 			Scope:   apiextv1beta1.NamespaceScoped,
-			Names:   apiextv1beta1.CustomResourceDefinitionNames{
+			Names: apiextv1beta1.CustomResourceDefinitionNames{
 				Plural: CRDPlural,
-				Kind:   reflect.TypeOf(Example{}).Name(),
+				Kind:   reflect.TypeOf(NetworkObject{}).Name(),
 			},
 		},
 	}
@@ -60,27 +60,51 @@ func CreateCRD(clientset apiextcs.Interface) error {
 }
 
 // Definition of our CRD Example class
-type Example struct {
-	meta_v1.TypeMeta   `json:",inline"`
-	meta_v1.ObjectMeta `json:"metadata"`
-	Spec               ExampleSpec   `json:"spec"`
-	Status             ExampleStatus `json:"status,omitempty"`
+type NetworkObject struct {
+	meta_v1.TypeMeta                `json:",inline"`
+	meta_v1.ObjectMeta              `json:"metadata"`
+	VirtualNetork  VirtualNetwork `json:"virtualNetworks"`
+	NetworkDriver  []NetworkDriver  `json:"networkDrivers"`
+	NetworkService []NetworkService `json:"networkServices"`
 }
-type ExampleSpec struct {
-	Foo string `json:"foo"`
-	Bar bool   `json:"bar"`
-	Baz int    `json:"baz,omitempty"`
+type VirtualNetwork struct {
+	Name      string           `json:"name"`
+	Namespace string         `json:"namespace"`
+	Driver    []string         `json:"drivers"`
+	Subnet    []string         `json:"subnets"`
+	Service   []string         `json:"services"`
+	Policy    []SecurityPolicy `json:"securityPolicies"`
 }
 
-type ExampleStatus struct {
-	State   string `json:"state,omitempty"`
-	Message string `json:"message,omitempty"`
+type SecurityPolicy struct {
+	Type     string     `json:"type"`
+	Selector []Selector `json:"selectors"`
+	Port     []Port     `json:"ports"`
 }
 
-type ExampleList struct {
-	meta_v1.TypeMeta `json:",inline"`
-	meta_v1.ListMeta `json:"metadata"`
-	Items            []Example `json:"items"`
+type Selector struct {
+	Type    string `json:"type"`
+	Matcher string `json:"matcher"`
+}
+
+type Port struct {
+	Protocol string `json:"protocol"`
+	Port     int    `json:"port"`
+}
+
+type NetworkDriver struct {
+	Name string `json:"name"`
+}
+
+type NetworkService struct {
+	Type string `json:"type"`
+	Name string `json:"name"`
+}
+
+type NetworkObjectList struct {
+	meta_v1.TypeMeta      `json:",inline"`
+	meta_v1.ListMeta      `json:"metadata"`
+	Items []NetworkObject `json:"items"`
 }
 
 // Create a  Rest client with the new CRD Schema
@@ -88,8 +112,8 @@ var SchemeGroupVersion = schema.GroupVersion{Group: CRDGroup, Version: CRDVersio
 
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
-		&Example{},
-		&ExampleList{},
+		&NetworkObject{},
+		&NetworkObjectList{},
 	)
 	meta_v1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
