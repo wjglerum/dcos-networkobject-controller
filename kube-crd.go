@@ -113,13 +113,13 @@ func main() {
 		time.Minute*10,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				fmt.Printf("add: %s \n", obj)
+				add(obj)
 			},
 			DeleteFunc: func(obj interface{}) {
-				fmt.Printf("delete: %s \n", obj)
+				delete(obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				fmt.Printf("Update old: %s \n      New: %s\n", oldObj, newObj)
+				update(oldObj, newObj)
 			},
 		},
 	)
@@ -129,4 +129,16 @@ func main() {
 
 	// Wait forever
 	select {}
+}
+
+func add(obj interface{}) {
+	fmt.Printf("add: %s \n", obj)
+}
+
+func delete(obj interface{}) {
+	fmt.Printf("delete: %s \n", obj)
+}
+
+func update(oldObj, newObj interface{})  {
+	fmt.Printf("Update old: %s \n      New: %s\n", oldObj, newObj)
 }
