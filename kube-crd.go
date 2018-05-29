@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yaronha/kube-crd/client"
-	"github.com/yaronha/kube-crd/crd"
+	"github.com/wjglerum/kube-crd/client"
+	"github.com/wjglerum/kube-crd/crd"
 
 	apiextcs "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
