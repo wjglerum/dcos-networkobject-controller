@@ -1,0 +1,23 @@
+{
+  "apiVersion": "dcos.wjglerum.nl/v1",
+  "kind": "NetworkObject",
+  "metadata": {
+    "labels": {
+      "mylabel": "test"
+    },
+    "name": "example234",
+    "namespace": "default"
+  },
+  "networkDrivers": [],
+  "networkServices": [],
+  "virtualNetworks": {
+    "drivers": [],
+    "name": "test-network",
+    "namespace": "default",
+    "securityPolicies": [],
+    "services": [],
+    "subnets": [
+      "192.168.1.0/24"
+    ]
+  }
+}

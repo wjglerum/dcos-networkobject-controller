@@ -29,6 +29,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/tools/clientcmd"
 	"flag"
+	"github.com/google/go-cmp/cmp"
 )
 
 // return rest config, if path not specified assume in cluster config
@@ -143,4 +144,6 @@ func delete(obj interface{}) {
 
 func update(oldObj, newObj interface{}) {
 	fmt.Printf("Update old: %s \n      New: %s\n", oldObj, newObj)
+	fmt.Printf("Equal: %t\n", cmp.Equal(oldObj, newObj))
+	fmt.Printf("Diff: %s\n", cmp.Diff(oldObj, newObj))
 }
