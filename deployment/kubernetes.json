@@ -1,0 +1,47 @@
+{
+  "service": {
+    "name": "kubernetes",
+    "sleep": 1000,
+    "service_account": "",
+    "service_account_secret": "",
+    "log_level": "INFO"
+  },
+  "kubernetes": {
+    "high_availability": false,
+    "service_cidr": "10.100.0.0/16",
+    "network_provider": "dcos",
+    "node_count": 1,
+    "cloud_provider": "(none)",
+    "public_node_count": 0,
+    "reserved_resources": {
+      "kube_mem": 1024,
+      "kube_disk": 10240,
+      "system_cpus": 1,
+      "system_mem": 1024,
+      "kube_cpus": 0.1
+    }
+  },
+  "etcd": {
+    "cpus": 0.1,
+    "data_disk": 3072,
+    "wal_disk": 512,
+    "disk_type": "ROOT",
+    "mem": 256
+  },
+  "scheduler": {
+    "mem": 256,
+    "cpus": 0.1
+  },
+  "controller_manager": {
+    "cpus": 0.1,
+    "mem": 256
+  },
+  "apiserver": {
+    "cpus": 0.1,
+    "mem": 256
+  },
+  "kube_proxy": {
+    "cpus": 0.1,
+    "mem": 256
+  }
+}
