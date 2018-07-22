@@ -63,13 +63,13 @@ func CreateCRD(clientset apiextcs.Interface) error {
 type NetworkObject struct {
 	meta_v1.TypeMeta                `json:",inline"`
 	meta_v1.ObjectMeta              `json:"metadata"`
-	VirtualNetork  VirtualNetwork `json:"virtualNetworks"`
+	VirtualNetwork VirtualNetwork   `json:"virtualNetworks"`
 	NetworkDriver  []NetworkDriver  `json:"networkDrivers"`
 	NetworkService []NetworkService `json:"networkServices"`
 }
 type VirtualNetwork struct {
 	Name      string           `json:"name"`
-	Namespace string         `json:"namespace"`
+	Namespace string           `json:"namespace"`
 	Driver    []string         `json:"drivers"`
 	Subnet    []string         `json:"subnets"`
 	Service   []string         `json:"services"`
@@ -78,6 +78,7 @@ type VirtualNetwork struct {
 
 type SecurityPolicy struct {
 	Type     string     `json:"type"`
+	Name     string     `json:"name"`
 	Selector []Selector `json:"selectors"`
 	Port     []Port     `json:"ports"`
 }

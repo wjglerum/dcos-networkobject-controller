@@ -30,6 +30,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"flag"
 	"github.com/google/go-cmp/cmp"
+	"github.com/wjglerum/kube-crd/plugins"
 )
 
 // return rest config, if path not specified assume in cluster config
@@ -75,18 +76,35 @@ func main() {
 	crdclient := client.CrdClient(crdcs, scheme, "default")
 
 	// Create a new Example object and write to k8s
+	port := crd.Port{
+		Protocol: "tcp",
+		Port:     80,
+	}
+
+	selector := crd.Selector{
+		Type:    "label",
+		Matcher: "nginx",
+	}
+
+	rule := crd.SecurityPolicy{
+		Type:     "ingress",
+		Name:     "test",
+		Selector: []crd.Selector{selector},
+		Port: []crd.Port{port},
+	}
+
 	example := &crd.NetworkObject{
 		ObjectMeta: meta_v1.ObjectMeta{
 			Name:   "example123",
 			Labels: map[string]string{"mylabel": "test"},
 		},
-		VirtualNetork: crd.VirtualNetwork{
+		VirtualNetwork: crd.VirtualNetwork{
 			Name:      "test-network",
 			Namespace: "default",
 			Driver:    []string{},
 			Subnet:    []string{"192.168.1.0/24"},
 			Service:   []string{},
-			Policy:    []crd.SecurityPolicy{},
+			Policy:    []crd.SecurityPolicy{rule},
 		},
 		NetworkDriver:  []crd.NetworkDriver{},
 		NetworkService: []crd.NetworkService{},
@@ -108,6 +126,7 @@ func main() {
 	}
 	fmt.Printf("List:\n%s\n", items)
 
+	calico := &plugins.CalicoPlugin{}
 	// Example Controller
 	// Watch for changes in Example objects and fire Add, Delete, Update callbacks
 	_, controller := cache.NewInformer(
@@ -116,13 +135,13 @@ func main() {
 		time.Minute*10,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
-				add(obj)
+				add(obj, calico)
 			},
 			DeleteFunc: func(obj interface{}) {
-				delete(obj)
+				delete(obj, calico)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
-				update(oldObj, newObj)
+				update(oldObj, newObj, calico)
 			},
 		},
 	)
@@ -134,15 +153,36 @@ func main() {
 	select {}
 }
 
-func add(obj interface{}) {
+func add(obj interface{}, plugin *plugins.CalicoPlugin) {
+	port := crd.Port{
+		Protocol: "tcp",
+		Port:     80,
+	}
+
+	selector := crd.Selector{
+		Type:    "label",
+		Matcher: "role == 'nginx'",
+	}
+
+	rule := crd.SecurityPolicy{
+		Type:     "ingress",
+		Name:     "test",
+		Selector: []crd.Selector{selector},
+		Port: []crd.Port{port},
+	}
+	pl, err := plugin.AddPolicy(rule)
 	fmt.Printf("add: %s \n", obj)
+	fmt.Print(pl)
+	fmt.Print(err)
 }
 
-func delete(obj interface{}) {
+func delete(obj interface{}, plugin *plugins.CalicoPlugin) {
+	err := plugin.DeletePolicy(obj.(*crd.NetworkObject).VirtualNetwork.Policy[0].Name)
 	fmt.Printf("delete: %s \n", obj)
+	fmt.Print(err)
 }
 
-func update(oldObj, newObj interface{}) {
+func update(oldObj, newObj interface{}, plugin *plugins.CalicoPlugin) {
 	fmt.Printf("Update old: %s \n      New: %s\n", oldObj, newObj)
 	fmt.Printf("Equal: %t\n", cmp.Equal(oldObj, newObj))
 	fmt.Printf("Diff: %s\n", cmp.Diff(oldObj, newObj))
