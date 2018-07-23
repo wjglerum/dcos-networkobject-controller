@@ -1,23 +1,37 @@
 {
-  "apiVersion": "dcos.wjglerum.nl/v1",
-  "kind": "NetworkObject",
-  "metadata": {
-    "labels": {
-      "mylabel": "test"
+    "apiVersion": "dcos.wjglerum.nl/v1",
+    "kind": "NetworkObject",
+    "metadata": {
+        "name": "example123",
+        "namespace": "default"
     },
-    "name": "example123",
-    "namespace": "default"
-  },
-  "networkDrivers": [],
-  "networkServices": [],
-  "virtualNetworks": {
-    "drivers": [],
-    "name": "test-network",
-    "namespace": "default",
-    "securityPolicies": [],
-    "services": [],
-    "subnets": [
-      "192.168.1.0/24"
-    ]
-  }
+    "networkDrivers": [],
+    "networkServices": [],
+    "virtualNetworks": {
+        "drivers": [],
+        "name": "test-network",
+        "namespace": "default",
+        "securityPolicies": [
+            {
+                "name": "test",
+                "ports": [
+                    {
+                        "port": 80,
+                        "protocol": "tcp"
+                    }
+                ],
+                "selectors": [
+                    {
+                        "matcher": "nginx",
+                        "type": "label"
+                    }
+                ],
+                "type": "ingress"
+            }
+        ],
+        "services": [],
+        "subnets": [
+            "192.168.1.0/24"
+        ]
+    }
 }
