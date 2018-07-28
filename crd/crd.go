@@ -70,13 +70,13 @@ type NetworkObject struct {
 type VirtualNetwork struct {
 	Name      string           `json:"name"`
 	Namespace string           `json:"namespace"`
-	Driver    []string         `json:"drivers"`
+	Driver    string           `json:"driver"`
 	Subnet    []string         `json:"subnets"`
 	Service   []string         `json:"services"`
-	Policy    []SecurityPolicy `json:"securityPolicies"`
+	Policy    []NetworkPolicy  `json:"networkPolicies"`
 }
 
-type SecurityPolicy struct {
+type NetworkPolicy struct {
 	Type     string     `json:"type"`
 	Name     string     `json:"name"`
 	Selector []Selector `json:"selectors"`

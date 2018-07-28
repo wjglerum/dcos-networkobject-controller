@@ -5,7 +5,7 @@
         "name": "example123",
         "namespace": "default"
     },
-    "networkDrivers": [],
+    "networkDriver": "calico",
     "networkServices": [],
     "virtualNetworks": {
         "drivers": [],
@@ -22,7 +22,7 @@
                 ],
                 "selectors": [
                     {
-                        "matcher": "nginx",
+                        "matcher": "role==webserver",
                         "type": "label"
                     }
                 ],

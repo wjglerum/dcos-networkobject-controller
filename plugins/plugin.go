@@ -3,7 +3,7 @@ package plugins
 import "github.com/wjglerum/kube-crd/crd"
 
 type PluginInterface interface {
-	ListPolicies() ([]crd.SecurityPolicy, error)
-	AddPolicy(policy crd.SecurityPolicy) (crd.SecurityPolicy, error)
+	ListPolicies() ([]crd.NetworkPolicy, error)
+	AddPolicy(policy crd.NetworkPolicy) (crd.NetworkPolicy, error)
 	DeletePolicy(name string) error
 }

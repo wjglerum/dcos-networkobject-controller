@@ -1,0 +1,18 @@
+"networkPolicies": [
+    {
+        "name": "test-policy",
+        "ports": [
+            {
+                "port": 80,
+                "protocol": "tcp"
+            }
+        ],
+        "selectors": [
+            {
+                "matcher": "role==webserver",
+                "type": "label"
+            }
+        ],
+        "type": "ingress"
+    }
+]

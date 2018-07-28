@@ -14,12 +14,12 @@ type CalicoPlugin struct{}
 var newClient, _ = client.NewFromEnv()
 var policies = newClient.Policies()
 
-func (c CalicoPlugin) ListPolicies() ([]crd.SecurityPolicy, error) {
+func (c CalicoPlugin) ListPolicies() ([]crd.NetworkPolicy, error) {
 	policies, err := policies.List(api.PolicyMetadata{})
 	return convertPoliciesTo(policies), err
 }
 
-func (c CalicoPlugin) AddPolicy(policy crd.SecurityPolicy) (crd.SecurityPolicy, error) {
+func (c CalicoPlugin) AddPolicy(policy crd.NetworkPolicy) (crd.NetworkPolicy, error) {
 	p, err := policies.Create(convertPolicy(policy))
 	return convertPolicyTo(p), err
 }
@@ -31,7 +31,7 @@ func (c CalicoPlugin) DeletePolicy(name string) error {
 	return policies.Delete(meta)
 }
 
-func convertPolicy(policy crd.SecurityPolicy) *api.Policy {
+func convertPolicy(policy crd.NetworkPolicy) *api.Policy {
 	protocol := numorstring.ProtocolFromString(policy.Port[0].Protocol)
 	p := api.NewPolicy()
 	// TODO fix for array of rules
@@ -53,8 +53,8 @@ func convertPolicy(policy crd.SecurityPolicy) *api.Policy {
 	return p
 }
 
-func convertPolicyTo(policy *api.Policy) crd.SecurityPolicy {
-	return crd.SecurityPolicy{
+func convertPolicyTo(policy *api.Policy) crd.NetworkPolicy {
+	return crd.NetworkPolicy{
 		Type: policy.Kind,
 		Name: policy.Metadata.Name,
 		Selector: []crd.Selector{{
@@ -69,8 +69,8 @@ func convertPolicyTo(policy *api.Policy) crd.SecurityPolicy {
 	}
 }
 
-func convertPoliciesTo(policies *api.PolicyList) []crd.SecurityPolicy {
-	newPolicies := make([]crd.SecurityPolicy, len(policies.Items))
+func convertPoliciesTo(policies *api.PolicyList) []crd.NetworkPolicy {
+	newPolicies := make([]crd.NetworkPolicy, len(policies.Items))
 	for i, v := range policies.Items {
 		newPolicies[i] = convertPolicyTo(&v)
 	}

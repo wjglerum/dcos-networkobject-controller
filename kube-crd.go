@@ -83,10 +83,10 @@ func main() {
 
 	selector := crd.Selector{
 		Type:    "label",
-		Matcher: "nginx",
+		Matcher: "webserver",
 	}
 
-	rule := crd.SecurityPolicy{
+	rule := crd.NetworkPolicy{
 		Type:     "ingress",
 		Name:     "test",
 		Selector: []crd.Selector{selector},
@@ -101,10 +101,10 @@ func main() {
 		VirtualNetwork: crd.VirtualNetwork{
 			Name:      "test-network",
 			Namespace: "default",
-			Driver:    []string{},
+			Driver:    "calico",
 			Subnet:    []string{"192.168.1.0/24"},
 			Service:   []string{},
-			Policy:    []crd.SecurityPolicy{rule},
+			Policy:    []crd.NetworkPolicy{rule},
 		},
 		NetworkDriver:  []crd.NetworkDriver{},
 		NetworkService: []crd.NetworkService{},
@@ -154,23 +154,8 @@ func main() {
 }
 
 func add(obj interface{}, plugin *plugins.CalicoPlugin) {
-	port := crd.Port{
-		Protocol: "tcp",
-		Port:     80,
-	}
-
-	selector := crd.Selector{
-		Type:    "label",
-		Matcher: "role == 'nginx'",
-	}
-
-	rule := crd.SecurityPolicy{
-		Type:     "ingress",
-		Name:     "test",
-		Selector: []crd.Selector{selector},
-		Port: []crd.Port{port},
-	}
-	pl, err := plugin.AddPolicy(rule)
+	nom := obj.(*crd.NetworkObject)
+	pl, err := plugin.AddPolicy(nom.VirtualNetwork.Policy[0])
 	fmt.Printf("add: %s \n", obj)
 	fmt.Print(pl)
 	fmt.Print(err)
